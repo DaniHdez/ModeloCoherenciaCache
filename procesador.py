@@ -28,11 +28,10 @@ def genInstruction ():
 
 	return instruction
 
-requestsQueue = []
-#addres, MSI, act
-requestsQueue2 = []
-requestsQueue3 = []
-requestsQueue4 = []
+requestsQueue = queue.Queue()
+requestsQueue2 = queue.Queue()
+requestsQueue3 = queue.Queue()
+requestsQueue4 = queue.Queue()
 
 
 responseQueue = queue.Queue()
@@ -43,89 +42,102 @@ responseQueue4 = queue.Queue()
 
 def control (idProc, address, estado, act):
 	if (idProc == 'CPU1'):
-		requestsQueue2.append([address, estado, act])
-		requestsQueue3.append([address, estado, act])
-		requestsQueue4.append([address, estado, act])
+		requestsQueue2.put([address, estado, act])
+		requestsQueue3.put([address, estado, act])
+		requestsQueue4.put([address, estado, act])
 	elif (idProc == 'CPU2'):
-		requestsQueue.append([address, estado, act])
-		requestsQueue3.append([address, estado, act])
-		requestsQueue4.append([address, estado, act])
+		requestsQueue.put([address, estado, act])
+		requestsQueue3.put([address, estado, act])
+		requestsQueue4.put([address, estado, act])
 	elif (idProc == 'CPU3'):
-		requestsQueue.append([address, estado, act])
-		requestsQueue2.append([address, estado, act])
-		requestsQueue4.append([address, estado, act])
+		requestsQueue.put([address, estado, act])
+		requestsQueue2.put([address, estado, act])
+		requestsQueue4.put([address, estado, act])
 	elif (idProc == 'CPU4'):
-		requestsQueue.append([address, estado, act])
-		requestsQueue2.append([address, estado, act])
-		requestsQueue3.append([address, estado, act])
+		requestsQueue.put([address, estado, act])
+		requestsQueue2.put([address, estado, act])
+		requestsQueue3.put([address, estado, act])
 	if (estado == 'search'):
 		if (idProc == 'CPU1'):
-			responseQ2 = responseQueue2.get()
-			responseQ3 = responseQueue3.get()
-			responseQ4 = responseQueue4.get()
-			if (responseQ2[2] != 'Not found'):
-				if (responseQ2[3] == 'M'):
-					data = responseQ2[2]
-					return data
-			if (responseQ3[2] != 'Not found'):
-				if (responseQ3[3] == 'M'):
-					data = responseQ3[2]
-					return data
-			if (responseQ4[2] != 'Not found'):
-				if (responseQ4[3] == 'M'):
-					data = responseQ4[2]
-					return data	 
+			if (responseQueue2.empty() == False):
+				responseQ2 = responseQueue2.get()
+				if (responseQ2[2] != 'Not found'):
+					if (responseQ2[3] == 'M'):
+						data = responseQ2[2]
+						return data
+			if (responseQueue3.empty() == False):
+				responseQ3 = responseQueue3.get()
+				if (responseQ3[2] != 'Not found'):
+					if (responseQ3[3] == 'M'):
+						data = responseQ3[2]
+						return data
+			if (responseQueue4.empty() == False):
+				responseQ4 = responseQueue4.get()
+				if (responseQ4[2] != 'Not found'):
+					if (responseQ4[3] == 'M'):
+						data = responseQ4[2]
+						return data
 			return ('Not found')
+
 		if (idProc == 'CPU2'):
-			responseQ = responseQueue.get()
-			responseQ3 = responseQueue3.get()
-			responseQ4 = responseQueue4.get()
-			if (responseQ[2] != 'Not found'):
-				if (responseQ[3] == 'M'):
-					data = responseQ[2]
-					return data
-			if (responseQ3[2] != 'Not found'):
-				if (responseQ3[3] == 'M'):
-					data = responseQ3[2]
-					return data
-			if (responseQ4[2] != 'Not found'):
-				if (responseQ4[3] == 'M'):
-					data = responseQ4[2]
-					return data
+			if (responseQueue.empty() == False):
+				responseQ = responseQueue.get()
+				if (responseQ[2] != 'Not found'):
+					if (responseQ[3] == 'M'):
+						data = responseQ[2]
+						return data
+			if (responseQueue3.empty() == False):
+				responseQ3 = responseQueue3.get()
+				if (responseQ3[2] != 'Not found'):
+					if (responseQ3[3] == 'M'):
+						data = responseQ3[2]
+						return data
+			if (responseQueue4.empty() == False):
+				responseQ4 = responseQueue4.get()
+				if (responseQ4[2] != 'Not found'):
+					if (responseQ4[3] == 'M'):
+						data = responseQ4[2]
+						return data
 			return ('Not found')
 		if (idProc == 'CPU3'):
-			responseQ2 = responseQueue2.get()
-			responseQ = responseQueue.get()
-			responseQ4 = responseQueue4.get()
-			if (responseQ2[2] != 'Not found'):
-				if (responseQ2[3] == 'M'):
-					data = responseQ2[2]
-					return data
-			if (responseQ[2] != 'Not found'):
-				if (responseQ[3] == 'M'):
-					data = responseQ[2]
-					return data
-			if (responseQ4[2] != 'Not found'):
-				if (responseQ4[3] == 'M'):
-					data = responseQ4[2]
-					return data
+			if (responseQueue.empty() == False):
+				responseQ = responseQueue.get()
+				if (responseQ[2] != 'Not found'):
+					if (responseQ[3] == 'M'):
+						data = responseQ[2]
+						return data
+			if (responseQueue2.empty() == False):
+				responseQ2 = responseQueue2.get()
+				if (responseQ2[2] != 'Not found'):
+					if (responseQ2[3] == 'M'):
+						data = responseQ2[2]
+						return data
+			if (responseQueue4.empty() == False):
+				responseQ4 = responseQueue4.get()
+				if (responseQ4[2] != 'Not found'):
+					if (responseQ4[3] == 'M'):
+						data = responseQ4[2]
+						return data
 			return ('Not found')
 		if (idProc == 'CPU4'):
-			responseQ2 = responseQueue2.get()
-			responseQ = responseQueue.get()
-			responseQ3 = responseQueue3.get()
-			if (responseQ2[2] != 'Not found'):
-				if (responseQ2[3] == 'M'):
-					data = responseQ2[2]
-					return data
-			if (responseQ[2] != 'Not found'):
-				if (responseQ[3] == 'M'):
-					data = responseQ[2]
-					return data
-			if (responseQ3[2] != 'Not found'):
-				if (responseQ3[3] == 'M'):
-					data = responseQ3[2]
-					return data
+			if (responseQueue.empty() == False):
+				responseQ = responseQueue.get()
+				if (responseQ[2] != 'Not found'):
+					if (responseQ[3] == 'M'):
+						data = responseQ[2]
+						return data
+			if (responseQueue2.empty() == False):
+				responseQ2 = responseQueue2.get()
+				if (responseQ2[2] != 'Not found'):
+					if (responseQ2[3] == 'M'):
+						data = responseQ2[2]
+						return data
+			if (responseQueue3.empty() == False):
+				responseQ3 = responseQueue3.get()
+				if (responseQ3[2] != 'Not found'):
+					if (responseQ3[3] == 'M'):
+						data = responseQ3[2]
+						return data
 			return ('Not found')
 			
 
@@ -159,29 +171,28 @@ def processor(idProc, requestsQueue, responseQueue):
 		processorInstruction.append(genInstruction())
 		myPrint (idProc, processorInstruction)
 		time.sleep (0.5)
-		if (len(requestsQueue) != 0):
-			for request in requestsQueue:
-				tag = getTag(request[0])
-				block = getBlock(request[0])
-				if (request[1] == 'I' or request[1] == 'M' or request[1] == 'S'):
-					if (tag == cache[block][0] and cache[block][1] != ''):
-						cache[block][2] = request[1]
-				else:
-					if (tag == cache[block][0] and cache[block][2] == 'M' and request[2] == 'write'):
-						myPrint (idProc, 'Accessing memory')
-						time.sleep (2)
-						bus.busMemory(idProc, request[0], 'write', cache[block][1])
-						responseQueue.put([idProc, request[0], cache[block][1], 'M'])
-					elif (tag == cache[block][0] and cache[block][1] == 'S' and request[2] == 'write'):
-						responseQueue.put([idProc, request[0], cache[block][1], 'S'])
-					elif (tag == cache[block][0] and cache[block][1] == 'M' and request[2] == 'read'):
-						responseQueue.put([idProc, request[0], cache[block][1], 'M'])
-					elif (tag == cache[block][0] and cache[block][1] == 'S' and request[2] == 'read'):
-						responseQueue.put([idProc, request[0], cache[block][1], 'S'])
-					else:
-						responseQueue.put([idProc, request[0], 'Not found', ''])
 
-			requestsQueue.clear()
+		if (requestsQueue.empty()==False):
+			request = requestsQueue.get()
+			tag = getTag(request[0])
+			block = getBlock(request[0])
+			if (request[1] == 'I' or request[1] == 'M' or request[1] == 'S'):
+				if (tag == cache[block][0] and cache[block][1] != ''):
+					cache[block][2] = request[1]
+			else:
+				if (tag == cache[block][0] and cache[block][2] == 'M' and request[2] == 'write'):
+					myPrint (idProc, 'Accessing memory')
+					time.sleep (2)
+					bus.busMemory(idProc, request[0], 'write', cache[block][1])
+					responseQueue.put([idProc, request[0], cache[block][1], 'M'])
+				elif (tag == cache[block][0] and cache[block][1] == 'S' and request[2] == 'write'):
+					responseQueue.put([idProc, request[0], cache[block][1], 'S'])
+				elif (tag == cache[block][0] and cache[block][1] == 'M' and request[2] == 'read'):
+					responseQueue.put([idProc, request[0], cache[block][1], 'M'])
+				elif (tag == cache[block][0] and cache[block][1] == 'S' and request[2] == 'read'):
+					responseQueue.put([idProc, request[0], cache[block][1], 'S'])
+				else:
+					responseQueue.put([idProc, request[0], 'Not found', ''])
 
 		if (processorInstruction[1][0] == 'process'):
 			time.sleep (0.5)
