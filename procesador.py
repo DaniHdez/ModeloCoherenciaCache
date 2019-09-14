@@ -4,7 +4,7 @@
 #															#
 #	Programmer: Daniela Hernandez Alvarado (DaniHdez)		#	
 #															#
-#	Last update:6/9/2019									# 
+#	Last update:14/9/2019									# 
 #															#
 #	Arquitectura de Computadores II							#
 #	Professor. Jeferson Gonzalez							#
@@ -61,41 +61,37 @@ def control (idProc, address, estado, act):
 	if (estado == 'search'):
 		if (idProc == 'CPU1'):
 			responseQ2 = responseQueue2.get()
-			#responseQ3 = responseQueue3.get()
-			#responseQ4 = responseQueue4.get()
+			responseQ3 = responseQueue3.get()
+			responseQ4 = responseQueue4.get()
 			if (responseQ2[2] != 'Not found'):
 				if (responseQ2[3] == 'M'):
 					data = responseQ2[2]
 					return data
-			#if (responseQ3[2] != 'Not found'):
-			#	if (responseQ3[3] == 'M'):
-			#		data = responseQ3[2]
-			#		print ("\033[;34m", data)
-			#		return data
-			#if (responseQ4[2] != 'Not found'):
-			#	if (responseQ4[3] == 'M'):
-			#		data = responseQ4[2]
-			#		print ("\033[;34m", data)
-			#		return data	 
+			if (responseQ3[2] != 'Not found'):
+				if (responseQ3[3] == 'M'):
+					data = responseQ3[2]
+					return data
+			if (responseQ4[2] != 'Not found'):
+				if (responseQ4[3] == 'M'):
+					data = responseQ4[2]
+					return data	 
 			return ('Not found')
 		if (idProc == 'CPU2'):
 			responseQ = responseQueue.get()
-			#responseQ3 = responseQueue3.get()
-			#responseQ4 = responseQueue4.get()
+			responseQ3 = responseQueue3.get()
+			responseQ4 = responseQueue4.get()
 			if (responseQ[2] != 'Not found'):
 				if (responseQ[3] == 'M'):
 					data = responseQ[2]
 					return data
-			#if (responseQ3[2] != 'Not found'):
-			#	if (responseQ3[3] == 'M'):
-			#		data = responseQ3[2]
-			#		print ("\033[;34m", data)
-			#		return data
-			#if (responseQ4[2] != 'Not found'):
-			#	if (responseQ4[3] == 'M'):
-			#		data = responseQ4[2]
-			#		print ("\033[;34m", data)
-			#		return data
+			if (responseQ3[2] != 'Not found'):
+				if (responseQ3[3] == 'M'):
+					data = responseQ3[2]
+					return data
+			if (responseQ4[2] != 'Not found'):
+				if (responseQ4[3] == 'M'):
+					data = responseQ4[2]
+					return data
 			return ('Not found')
 		if (idProc == 'CPU3'):
 			responseQ2 = responseQueue2.get()
@@ -104,19 +100,15 @@ def control (idProc, address, estado, act):
 			if (responseQ2[2] != 'Not found'):
 				if (responseQ2[3] == 'M'):
 					data = responseQ2[2]
-					print ("\033[;34m", data)
 					return data
 			if (responseQ[2] != 'Not found'):
 				if (responseQ[3] == 'M'):
 					data = responseQ[2]
-					print ("\033[;34m", data)
 					return data
 			if (responseQ4[2] != 'Not found'):
 				if (responseQ4[3] == 'M'):
 					data = responseQ4[2]
-					print ("\033[;34m", data)
 					return data
-			print ("\033[;34m", 'Not found')
 			return ('Not found')
 		if (idProc == 'CPU4'):
 			responseQ2 = responseQueue2.get()
@@ -125,19 +117,15 @@ def control (idProc, address, estado, act):
 			if (responseQ2[2] != 'Not found'):
 				if (responseQ2[3] == 'M'):
 					data = responseQ2[2]
-					print ("\033[;34m", data)
 					return data
 			if (responseQ[2] != 'Not found'):
 				if (responseQ[3] == 'M'):
 					data = responseQ[2]
-					print ("\033[;34m", data)
 					return data
 			if (responseQ3[2] != 'Not found'):
 				if (responseQ3[3] == 'M'):
 					data = responseQ3[2]
-					print ("\033[;34m", data)
 					return data
-			print ("\033[;34m", 'Not found')
 			return ('Not found')
 			
 
@@ -180,23 +168,31 @@ def processor(idProc, requestsQueue, responseQueue):
 						cache[block][2] = request[1]
 				else:
 					if (tag == cache[block][0] and cache[block][2] == 'M' and request[2] == 'write'):
+						myPrint (idProc, 'Accessing memory')
+						time.sleep (2)
 						bus.busMemory(idProc, request[0], 'write', cache[block][1])
-						responseQueue.put([idProc, request[0], cache[block][1], 'M'], False)
+						responseQueue.put([idProc, request[0], cache[block][1], 'M'])
 					elif (tag == cache[block][0] and cache[block][1] == 'S' and request[2] == 'write'):
-						responseQueue.put([idProc, request[0], cache[block][1], 'S'], False)
+						responseQueue.put([idProc, request[0], cache[block][1], 'S'])
 					elif (tag == cache[block][0] and cache[block][1] == 'M' and request[2] == 'read'):
-						responseQueue.put([idProc, request[0], cache[block][1], 'M'], False)
+						responseQueue.put([idProc, request[0], cache[block][1], 'M'])
 					elif (tag == cache[block][0] and cache[block][1] == 'S' and request[2] == 'read'):
-						responseQueue.put([idProc, request[0], cache[block][1], 'S'], False)
+						responseQueue.put([idProc, request[0], cache[block][1], 'S'])
 					else:
-						responseQueue.put([idProc, request[0], 'Not found', ''], False)
+						responseQueue.put([idProc, request[0], 'Not found', ''])
 
 			requestsQueue.clear()
 
-		if (processorInstruction[1][0] == 'write'):
+		if (processorInstruction[1][0] == 'process'):
+			time.sleep (0.5)
+			myPrint (idProc, 'Processing')
+			time.sleep (0.5)
+
+		elif (processorInstruction[1][0] == 'write'):
 			address = processorInstruction[1][1]
 			tag = getTag(address)
 			block = getBlock(address)
+			#Arreglar debo buscar primero en otras $'s antes de guardar un dato
 			if (cache[block][0]==0 and cache[block][1]=='' and cache[block][2]=='I'):
 				myPrint(idProc, 'Miss, cold $')
 				#print ('Miss, cold $')
@@ -204,6 +200,8 @@ def processor(idProc, requestsQueue, responseQueue):
 				cache[block][1] = idProc
 				cache[block][2] = 'M'
 				#Guardar en memoria
+				myPrint (idProc, 'Accessing memory')
+				time.sleep (2)
 				bus.busMemory (idProc, address, 'write', idProc)
 				#Si esta en otros $'s Invalidar
 				control(idProc, address, 'I', 'write')
@@ -214,7 +212,8 @@ def processor(idProc, requestsQueue, responseQueue):
 					#Escribir en memoria el valor de la direccion actual en ese bloque
 					wrongAddress = getAddress(cache[block][0], block) 
 					tempData = cache[block][1]
-					#Aca deberia escribir en myPemoria 
+					#Escribir en memoria 
+					bus.busMemory(idProc, wrongAddress, 'write', tempData)
 					cache[block][0] = tag
 					cache[block][1] = idProc
 					cache[block][2] = 'M'
@@ -247,8 +246,8 @@ def processor(idProc, requestsQueue, responseQueue):
 					myPrint (idProc, cache)
 				elif(cache[block][2] == 'I'):
 					#Buscar en cache la mas actualizada y guardar en memoria 
-					control (idProc, address, 'search', 'write')
 					myPrint (idProc, 'Miss, invalid block')
+					control (idProc, address, 'search', 'write')
 					cache[block][0] = tag
 					cache[block][1] = idProc
 					cache[block][2] = 'M'
@@ -268,13 +267,20 @@ def processor(idProc, requestsQueue, responseQueue):
 					cache[block][2] = 'S'
 					cache[block][0] = tag
 					cache[block][1] = foundData
-				#Este else es temporal solo por mientras busco la forma de leer de memoria
-				else: 
-					cache[block][2] = 'I'
-					cache[block][0] = tag
-					cache[block][1] = ''
-				#else:
-				#	bus.busMemory(idProc, address, 'read', '')
+					#Este else es temporal solo por mientras busco la forma de leer de memoria
+				else:
+					myPrint(idProc, 'Accessing memory')
+					time.sleep(2)
+					foundMemData = bus.busMemory(idProc, address, 'read', '')
+					if (foundMemData != 0):
+						cache[block][2] = 'S'
+						cache[block][0] = tag
+						cache[block][1] = foundData
+					else:
+						cache[block][2] = 'I'
+						cache[block][0] = tag
+						cache[block][1] = ''
+
 				myPrint (idProc, cache)
 
 			elif (cache[block][0]!=tag):
@@ -283,6 +289,8 @@ def processor(idProc, requestsQueue, responseQueue):
 					tempAddress = getAddress(cache[block][0], block)
 					tempData = cache[block][1]
 					#Guardar en memoria con tempAddress y tempData
+					myPrint (idProc, 'Accessing memory')
+					time.sleep (2)
 					bus.busMemory(idProc, tempAddress, 'write', tempData)
 					#Buscar el dato nuevo en algun $ con M o en memoria
 					foundData = control (idProc, address, 'search', 'read')
@@ -292,10 +300,18 @@ def processor(idProc, requestsQueue, responseQueue):
 						cache[block][0] = tag
 						cache[block][1] = foundData
 					#Este else es temporal solo por mientras busco la forma de leer de memoria
-					else: 
-						cache[block][2] = 'I'
-						cache[block][0] = tag
-						cache[block][1] = ''
+					else:
+						myPrint(idProc, 'Accessing memory')
+						time.sleep(2)
+						foundMemData = bus.busMemory(idProc, address, 'read', '')
+						if (foundMemData != 0):
+							cache[block][2] = 'S'
+							cache[block][0] = tag
+							cache[block][1] = foundData
+						else:
+							cache[block][2] = 'I'
+							cache[block][0] = tag
+							cache[block][1] = ''
 					myPrint (idProc, cache)
 				elif (cache[block][2]=='I'):
 					myPrint (idProc, 'Miss, coherency')
@@ -307,11 +323,21 @@ def processor(idProc, requestsQueue, responseQueue):
 						cache[block][0] = tag
 						cache[block][1] = foundData
 					#Este else es temporal solo por mientras busco la forma de leer de memoria
-					else: 
-						cache[block][2] = 'I'
-						cache[block][0] = tag
-						cache[block][1] = ''
+					else:
+						myPrint(idProc, 'Accessing memory')
+						time.sleep(2)
+						foundMemData = bus.busMemory(idProc, address, 'read', '')
+						if (foundMemData != 0):
+							cache[block][2] = 'S'
+							cache[block][0] = tag
+							cache[block][1] = foundData
+						else:
+							cache[block][2] = 'I'
+							cache[block][0] = tag
+							cache[block][1] = ''
+
 					myPrint (idProc, cache)
+					#Revisar el protocolo en este caso 
 				elif (cache[block][0]=='S'):
 					myPrint (idProc, 'Miss, coherency')
 					#Buscar el dato nuevo en algun $ con M o en memoria
@@ -322,10 +348,19 @@ def processor(idProc, requestsQueue, responseQueue):
 						cache[block][0] = tag
 						cache[block][1] = foundData
 					#Este else es temporal solo por mientras busco la forma de leer de memoria
-					else: 
-						cache[block][2] = 'I'
-						cache[block][0] = tag
-						cache[block][1] = ''
+					else:
+						myPrint(idProc, 'Accessing memory')
+						time.sleep(2)
+						foundMemData = bus.busMemory(idProc, address, 'read', '')
+						if (foundMemData != 0):
+							cache[block][2] = 'S'
+							cache[block][0] = tag
+							cache[block][1] = foundData
+						else:
+							cache[block][2] = 'I'
+							cache[block][0] = tag
+							cache[block][1] = ''
+
 					myPrint (idProc, cache)
 
 			elif (cache[block][0]==tag):
@@ -343,10 +378,19 @@ def processor(idProc, requestsQueue, responseQueue):
 						cache[block][0] = tag
 						cache[block][1] = foundData
 					#Este else es temporal solo por mientras busco la forma de leer de memoria
-					else: 
-						cache[block][2] = 'I'
-						cache[block][0] = tag
-						cache[block][1] = ''
+					else:
+						myPrint(idProc, 'Accessing memory')
+						time.sleep(2)
+						foundMemData = bus.busMemory(idProc, address, 'read', '')
+						if (foundMemData != 0):
+							cache[block][2] = 'S'
+							cache[block][0] = tag
+							cache[block][1] = foundData
+						else:
+							cache[block][2] = 'I'
+							cache[block][0] = tag
+							cache[block][1] = ''
+
 					myPrint (idProc, cache)
 
 
@@ -382,6 +426,6 @@ thread1.start()
 thread2 = threading.Thread(target = processor, args = ('CPU2', requestsQueue2, responseQueue2, ))
 thread2.start()
 thread3 = threading.Thread(target = processor, args = ('CPU3', requestsQueue3, responseQueue3, ))
-#thread3.start()
+thread3.start()
 thread4 = threading.Thread(target = processor, args = ('CPU4', requestsQueue4, responseQueue4, ))
-#thread4.start()
+thread4.start()

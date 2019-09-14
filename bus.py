@@ -4,7 +4,7 @@
 #															#
 #	Programmer: Daniela Hernandez Alvarado (DaniHdez)		#	
 #															#
-#	Last update:6/9/2019									# 
+#	Last update:14/9/2019									# 
 #															#
 #	Arquitectura de Computadores II							#
 #	Professor. Jeferson Gonzalez							#
@@ -12,17 +12,23 @@
 #############################################################
 
 import threading
-
-#a = procesador.getAddress (1, 4)
-#print (a)
+import time
+import queue 
 
 memRequests = []
+responseReads = queue.Queue()
+
 
 memory = [[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0]]
 
 def busMemory (idProcessor, address, action, data):
-#request = [idProcessor, address, act, miss]
+	#request = [idProcessor, address, act, miss]
 	memRequests.append([idProcessor, address, action, data])
+	if (action == 'read'):
+		readData = responseReads.get()
+		return readData
+
+
 
 
 def controlBus (memRequests):
@@ -31,14 +37,10 @@ def controlBus (memRequests):
 			for request in memRequests:
 				if (request[2]=='write'):
 					memory[request[1]][0] = request[3]
-					print (memory)
 				elif (request[2]=='read'):
-					print (memory[request[1]][0])
-					#tempMemData = memory[address]
-					#Debo pasarlo de alguna forma al cache
+					responseReads.put(memory[request[1]][0])
 			memRequests.clear()
 			print ("\033[;31m"+" ", memory)
-
 
 #controlBus(memRequests)
 thread5 = threading.Thread(target = controlBus, args = (memRequests, ))
