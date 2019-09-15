@@ -29,10 +29,11 @@ def genInstruction ():
 
 	return instruction
 
-requestsQueue = queue.Queue()
-requestsQueue2 = queue.Queue()
-requestsQueue3 = queue.Queue()
-requestsQueue4 = queue.Queue()
+requestsQueue = []
+requestsQueue2 = []
+requestsQueue3 = []
+requestsQueue4 = []
+
 
 
 responseQueue = queue.Queue()
@@ -43,21 +44,21 @@ responseQueue4 = queue.Queue()
 
 def control (idProc, address, estado, act):
 	if (idProc == 'CPU1'):
-		requestsQueue2.put([address, estado, act])
-		requestsQueue3.put([address, estado, act])
-		requestsQueue4.put([address, estado, act])
+		requestsQueue2.append([address, estado, act])
+		requestsQueue3.append([address, estado, act])
+		requestsQueue4.append([address, estado, act])
 	elif (idProc == 'CPU2'):
-		requestsQueue.put([address, estado, act])
-		requestsQueue3.put([address, estado, act])
-		requestsQueue4.put([address, estado, act])
+		requestsQueue.append([address, estado, act])
+		requestsQueue3.append([address, estado, act])
+		requestsQueue4.append([address, estado, act])
 	elif (idProc == 'CPU3'):
-		requestsQueue.put([address, estado, act])
-		requestsQueue2.put([address, estado, act])
-		requestsQueue4.put([address, estado, act])
+		requestsQueue.append([address, estado, act])
+		requestsQueue2.append([address, estado, act])
+		requestsQueue4.append([address, estado, act])
 	elif (idProc == 'CPU4'):
-		requestsQueue.put([address, estado, act])
-		requestsQueue2.put([address, estado, act])
-		requestsQueue3.put([address, estado, act])
+		requestsQueue.append([address, estado, act])
+		requestsQueue2.append([address, estado, act])
+		requestsQueue3.append([address, estado, act])
 	if (estado == 'search'):
 		if (idProc == 'CPU1'):
 			if (responseQueue2.empty() == False):
@@ -185,27 +186,28 @@ def processor(idProc, requestsQueue, responseQueue):
 		myPrint (idProc, processorInstruction)
 		time.sleep (0.5)
 
-		if (requestsQueue.empty()==False):
-			request = requestsQueue.get()
-			tag = getTag(request[0])
-			block = getBlock(request[0])
-			if (request[1] == 'I' or request[1] == 'M' or request[1] == 'S'):
-				if (tag == cache[block][0] and cache[block][1] != ''):
-					cache[block][2] = request[1]
-			else:
-				if (tag == cache[block][0] and cache[block][2] == 'M' and request[2] == 'write'):
-					myPrint (idProc, 'Accessing memory')
-					time.sleep (2)
-					bus.busMemory(idProc, request[0], 'write', cache[block][1])
-					responseQueue.put([idProc, request[0], cache[block][1], 'M'])
-				elif (tag == cache[block][0] and cache[block][1] == 'S' and request[2] == 'write'):
-					responseQueue.put([idProc, request[0], cache[block][1], 'S'])
-				elif (tag == cache[block][0] and cache[block][1] == 'M' and request[2] == 'read'):
-					responseQueue.put([idProc, request[0], cache[block][1], 'M'])
-				elif (tag == cache[block][0] and cache[block][1] == 'S' and request[2] == 'read'):
-					responseQueue.put([idProc, request[0], cache[block][1], 'S'])
+		if (len(requestsQueue) != 0):
+			for request in requestsQueue:
+				tag = getTag(request[0])
+				block = getBlock(request[0])
+				if (request[1] == 'I' or request[1] == 'M' or request[1] == 'S'):
+					if (tag == cache[block][0] and cache[block][1] != ''):
+						cache[block][2] = request[1]
 				else:
-					responseQueue.put([idProc, request[0], 'Not found', ''])
+					if (tag == cache[block][0] and cache[block][2] == 'M' and request[2] == 'write'):
+						myPrint (idProc, 'Accessing memory')
+						time.sleep (2)
+						bus.busMemory(idProc, request[0], 'write', cache[block][1])
+						responseQueue.put([idProc, request[0], cache[block][1], 'M'])
+					elif (tag == cache[block][0] and cache[block][1] == 'S' and request[2] == 'write'):
+						responseQueue.put([idProc, request[0], cache[block][1], 'S'])
+					elif (tag == cache[block][0] and cache[block][1] == 'M' and request[2] == 'read'):
+						responseQueue.put([idProc, request[0], cache[block][1], 'M'])
+					elif (tag == cache[block][0] and cache[block][1] == 'S' and request[2] == 'read'):
+						responseQueue.put([idProc, request[0], cache[block][1], 'S'])
+					else:
+						responseQueue.put([idProc, request[0], 'Not found', ''])
+			requestsQueue.clear()
 
 		if (processorInstruction[1][0] == 'process'):
 			time.sleep (0.5)
@@ -221,7 +223,7 @@ def processor(idProc, requestsQueue, responseQueue):
 				#print ('Miss, cold $')
 				cache[block][0] = tag
 				cache[block][1] = idProc
-				cache[block][2] = 'M'
+				cache[block][2] = 'S'
 				#Guardar en memoria
 				myPrint (idProc, 'Accessing memory')
 				time.sleep (2)
@@ -454,7 +456,7 @@ def menu ():
 	print ('/Iniciar: Ejecuta los cuatro procesadores')
 	print ('/Ctrl+c: Detiene la ejecucion')
 
-while True:
+def main():
 	menu()
  
 	# solicituamos una opción al usuario
@@ -465,3 +467,4 @@ while True:
 		thread2.start()
 		thread3.start()
 		thread4.start()
+main()
