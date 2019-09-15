@@ -62,83 +62,95 @@ def control (idProc, address, estado, act):
 		if (idProc == 'CPU1'):
 			if (responseQueue2.empty() == False):
 				responseQ2 = responseQueue2.get()
-				if (responseQ2[2] != 'Not found'):
-					if (responseQ2[3] == 'M'):
-						data = responseQ2[2]
-						return data
+				if (responseQ2[1] == address):
+					if (responseQ2[2] != 'Not found'):
+						if (responseQ2[3] == 'M'):
+							data = responseQ2[2]
+							return data
 			if (responseQueue3.empty() == False):
 				responseQ3 = responseQueue3.get()
-				if (responseQ3[2] != 'Not found'):
-					if (responseQ3[3] == 'M'):
-						data = responseQ3[2]
-						return data
+				if (responseQ3[1] == address):
+					if (responseQ3[2] != 'Not found'):
+						if (responseQ3[3] == 'M'):
+							data = responseQ3[2]
+							return data
 			if (responseQueue4.empty() == False):
 				responseQ4 = responseQueue4.get()
-				if (responseQ4[2] != 'Not found'):
-					if (responseQ4[3] == 'M'):
-						data = responseQ4[2]
-						return data
+				if (responseQ4[1] == address):
+					if (responseQ4[2] != 'Not found'):
+						if (responseQ4[3] == 'M'):
+							data = responseQ4[2]
+							return data
 			return ('Not found')
 
 		if (idProc == 'CPU2'):
 			if (responseQueue.empty() == False):
 				responseQ = responseQueue.get()
-				if (responseQ[2] != 'Not found'):
-					if (responseQ[3] == 'M'):
-						data = responseQ[2]
-						return data
+				if (responseQ[1] == address):
+					if (responseQ[2] != 'Not found'):
+						if (responseQ[3] == 'M'):
+							data = responseQ[2]
+							return data
 			if (responseQueue3.empty() == False):
 				responseQ3 = responseQueue3.get()
-				if (responseQ3[2] != 'Not found'):
-					if (responseQ3[3] == 'M'):
-						data = responseQ3[2]
-						return data
+				if (responseQ3[1] == address):
+					if (responseQ3[2] != 'Not found'):
+						if (responseQ3[3] == 'M'):
+							data = responseQ3[2]
+							return data
 			if (responseQueue4.empty() == False):
 				responseQ4 = responseQueue4.get()
-				if (responseQ4[2] != 'Not found'):
-					if (responseQ4[3] == 'M'):
-						data = responseQ4[2]
-						return data
+				if (responseQ4[1] == address):
+					if (responseQ4[2] != 'Not found'):
+						if (responseQ4[3] == 'M'):
+							data = responseQ4[2]
+							return data
 			return ('Not found')
 		if (idProc == 'CPU3'):
 			if (responseQueue.empty() == False):
 				responseQ = responseQueue.get()
-				if (responseQ[2] != 'Not found'):
-					if (responseQ[3] == 'M'):
-						data = responseQ[2]
-						return data
+				if (responseQ[1] == address):
+					if (responseQ[2] != 'Not found'):
+						if (responseQ[3] == 'M'):
+							data = responseQ[2]
+							return data
 			if (responseQueue2.empty() == False):
 				responseQ2 = responseQueue2.get()
-				if (responseQ2[2] != 'Not found'):
-					if (responseQ2[3] == 'M'):
-						data = responseQ2[2]
-						return data
+				if (responseQ2[1] == address):
+					if (responseQ2[2] != 'Not found'):
+						if (responseQ2[3] == 'M'):
+							data = responseQ2[2]
+							return data
 			if (responseQueue4.empty() == False):
 				responseQ4 = responseQueue4.get()
-				if (responseQ4[2] != 'Not found'):
-					if (responseQ4[3] == 'M'):
-						data = responseQ4[2]
-						return data
+				if (responseQ4[1] == address):
+					if (responseQ4[2] != 'Not found'):
+						if (responseQ4[3] == 'M'):
+							data = responseQ4[2]
+							return data
 			return ('Not found')
 		if (idProc == 'CPU4'):
 			if (responseQueue.empty() == False):
 				responseQ = responseQueue.get()
-				if (responseQ[2] != 'Not found'):
-					if (responseQ[3] == 'M'):
-						data = responseQ[2]
-						return data
+				if (responseQ[1] == address):
+					if (responseQ[2] != 'Not found'):
+						if (responseQ[3] == 'M'):
+							data = responseQ[2]
+							return data
 			if (responseQueue2.empty() == False):
 				responseQ2 = responseQueue2.get()
-				if (responseQ2[2] != 'Not found'):
-					if (responseQ2[3] == 'M'):
-						data = responseQ2[2]
-						return data
+				if (responseQ2[1] == address):
+					if (responseQ2[2] != 'Not found'):
+						if (responseQ2[3] == 'M'):
+							data = responseQ2[2]
+							return data
 			if (responseQueue3.empty() == False):
 				responseQ3 = responseQueue3.get()
-				if (responseQ3[2] != 'Not found'):
-					if (responseQ3[3] == 'M'):
-						data = responseQ3[2]
-						return data
+				if (responseQ3[1] == address):
+					if (responseQ3[2] != 'Not found'):
+						if (responseQ3[3] == 'M'):
+							data = responseQ3[2]
+							return data
 			return ('Not found')
 			
 
@@ -204,7 +216,6 @@ def processor(idProc, requestsQueue, responseQueue):
 			address = processorInstruction[1][1]
 			tag = getTag(address)
 			block = getBlock(address)
-			#Arreglar debo buscar primero en otras $'s antes de guardar un dato
 			if (cache[block][0]==0 and cache[block][1]=='' and cache[block][2]=='I'):
 				myPrint(idProc, 'Miss, cold $, write')
 				#print ('Miss, cold $')
@@ -279,7 +290,6 @@ def processor(idProc, requestsQueue, responseQueue):
 					cache[block][2] = 'S'
 					cache[block][0] = tag
 					cache[block][1] = foundData
-					#Este else es temporal solo por mientras busco la forma de leer de memoria
 				else:
 					myPrint(idProc, 'Accessing memory')
 					time.sleep(2)
@@ -307,11 +317,10 @@ def processor(idProc, requestsQueue, responseQueue):
 					#Buscar el dato nuevo en algun $ con M o en memoria
 					foundData = control (idProc, address, 'search', 'read')
 					if (foundData != 'Not found'):
-					#Logica para buscar en memoria si ambas son Not Found no guardar nada y mantener estado anterior
+						#Logica para buscar en memoria si ambas son Not Found no guardar nada y mantener estado anterior
 						cache[block][2] = 'S'
 						cache[block][0] = tag
 						cache[block][1] = foundData
-					#Este else es temporal solo por mientras busco la forma de leer de memoria
 					else:
 						myPrint(idProc, 'Accessing memory')
 						time.sleep(2)
@@ -330,11 +339,10 @@ def processor(idProc, requestsQueue, responseQueue):
 					#Buscar el dato nuevo en algun $ con M o en memoria
 					foundData = control (idProc, address, 'search', 'read')
 					if (foundData != 'Not found'):
-					#Logica para buscar en memoria si ambas son Not Found no guardar nada y mantener estado anterior
+						#Logica para buscar en memoria si ambas son Not Found no guardar nada y mantener estado anterior
 						cache[block][2] = 'S'
 						cache[block][0] = tag
 						cache[block][1] = foundData
-					#Este else es temporal solo por mientras busco la forma de leer de memoria
 					else:
 						myPrint(idProc, 'Accessing memory')
 						time.sleep(2)
@@ -355,11 +363,10 @@ def processor(idProc, requestsQueue, responseQueue):
 					#Buscar el dato nuevo en algun $ con M o en memoria
 					foundData = control (idProc, address, 'search', 'read')
 					if (foundData != 'Not found'):
-					#Logica para buscar en memoria si ambas son Not Found no guardar nada y mantener estado anterior
+						#Logica para buscar en memoria si ambas son Not Found no guardar nada y mantener estado anterior
 						cache[block][2] = 'S'
 						cache[block][0] = tag
 						cache[block][1] = foundData
-					#Este else es temporal solo por mientras busco la forma de leer de memoria
 					else:
 						myPrint(idProc, 'Accessing memory')
 						time.sleep(2)
@@ -385,11 +392,10 @@ def processor(idProc, requestsQueue, responseQueue):
 					#Buscar en memoria principal o en cualquier $ con M
 					foundData = control (idProc, address, 'search', 'read')
 					if (foundData != 'Not found'):
-					#Logica para buscar en memoria si ambas son Not Found no guardar nada y mantener estado anterior
+						#Logica para buscar en memoria si ambas son Not Found no guardar nada y mantener estado anterior
 						cache[block][2] = 'S'
 						cache[block][0] = tag
 						cache[block][1] = foundData
-					#Este else es temporal solo por mientras busco la forma de leer de memoria
 					else:
 						myPrint(idProc, 'Accessing memory')
 						time.sleep(2)
@@ -434,15 +440,15 @@ def getAddress(tag, block):
 
 
 thread1 = threading.Thread(target = processor, args = ('CPU1', requestsQueue, responseQueue, ))
-thread1.start()
+#thread1.start()
 thread2 = threading.Thread(target = processor, args = ('CPU2', requestsQueue2, responseQueue2, ))
-thread2.start()
+#thread2.start()
 thread3 = threading.Thread(target = processor, args = ('CPU3', requestsQueue3, responseQueue3, ))
-thread3.start()
+#thread3.start()
 thread4 = threading.Thread(target = processor, args = ('CPU4', requestsQueue4, responseQueue4, ))
-thread4.start()
+#thread4.start()
 
-'''def menu ():
+def menu ():
 	os.system('clear')
 	print ('Indicaciones')
 	print ('/Iniciar: Ejecuta los cuatro procesadores')
@@ -458,4 +464,4 @@ while True:
 		thread1.start()
 		thread2.start()
 		thread3.start()
-		thread4.start()'''
+		thread4.start()
