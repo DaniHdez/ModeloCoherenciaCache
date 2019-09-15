@@ -191,7 +191,10 @@ def processor(idProc, requestsQueue, responseQueue):
 				tag = getTag(request[0])
 				block = getBlock(request[0])
 				if (request[1] == 'I' or request[1] == 'M' or request[1] == 'S'):
-					if (tag == cache[block][0] and cache[block][1] != ''):
+					if (request[1] == 'S'):
+						if (tag == cache[block][0] and cache[block][1] != '' and cache[block][2] == 'M'):
+							cache[block][2] = request[1]
+					elif (tag == cache[block][0] and cache[block][1] != ''):
 						cache[block][2] = request[1]
 				else:
 					if (tag == cache[block][0] and cache[block][2] == 'M' and request[2] == 'write'):
@@ -302,7 +305,6 @@ def processor(idProc, requestsQueue, responseQueue):
 						cache[block][1] = foundMemData
 					else:
 						cache[block][2] = 'I'
-						cache[block][0] = tag
 						cache[block][1] = ''
 
 				myPrint (idProc, cache)
@@ -336,6 +338,7 @@ def processor(idProc, requestsQueue, responseQueue):
 							cache[block][0] = tag
 							cache[block][1] = ''
 					myPrint (idProc, cache)
+					control (idProc, address, 'S', 'read')
 				elif (cache[block][2]=='I'):
 					myPrint (idProc, 'Miss, coherency, read')
 					#Buscar el dato nuevo en algun $ con M o en memoria
@@ -359,6 +362,7 @@ def processor(idProc, requestsQueue, responseQueue):
 							cache[block][1] = ''
 
 					myPrint (idProc, cache)
+					control (idProc, address, 'S', 'read')
 					#Revisar el protocolo en este caso 
 				elif (cache[block][0]=='S'):
 					myPrint (idProc, 'Miss, coherency, read')
@@ -383,6 +387,7 @@ def processor(idProc, requestsQueue, responseQueue):
 							cache[block][1] = ''
 
 					myPrint (idProc, cache)
+					control (idProc, address, 'S', 'read')
 
 			elif (cache[block][0]==tag):
 				if (cache[block][2]=='M'):
@@ -411,6 +416,7 @@ def processor(idProc, requestsQueue, responseQueue):
 							cache[block][0] = tag
 							cache[block][1] = ''
 
+					control (idProc, address, 'S', 'read')
 					myPrint (idProc, cache)
 
 
