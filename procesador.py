@@ -16,6 +16,7 @@ import time
 import threading
 import bus 
 import queue
+import os
 
 def genInstruction ():
 	instruction = []
@@ -205,7 +206,7 @@ def processor(idProc, requestsQueue, responseQueue):
 			block = getBlock(address)
 			#Arreglar debo buscar primero en otras $'s antes de guardar un dato
 			if (cache[block][0]==0 and cache[block][1]=='' and cache[block][2]=='I'):
-				myPrint(idProc, 'Miss, cold $')
+				myPrint(idProc, 'Miss, cold $, write')
 				#print ('Miss, cold $')
 				cache[block][0] = tag
 				cache[block][1] = idProc
@@ -219,7 +220,7 @@ def processor(idProc, requestsQueue, responseQueue):
 				myPrint (idProc, cache)
 			elif (cache[block][0]!=tag):
 				if (cache[block][2]=='M'):
-					myPrint (idProc, 'Miss, coherency')
+					myPrint (idProc, 'Miss, coherency, write')
 					#Escribir en memoria el valor de la direccion actual en ese bloque
 					wrongAddress = getAddress(cache[block][0], block) 
 					tempData = cache[block][1]
@@ -257,7 +258,7 @@ def processor(idProc, requestsQueue, responseQueue):
 					myPrint (idProc, cache)
 				elif(cache[block][2] == 'I'):
 					#Buscar en cache la mas actualizada y guardar en memoria 
-					myPrint (idProc, 'Miss, invalid block')
+					myPrint (idProc, 'Miss, invalid block, write')
 					control (idProc, address, 'search', 'write')
 					cache[block][0] = tag
 					cache[block][1] = idProc
@@ -270,7 +271,7 @@ def processor(idProc, requestsQueue, responseQueue):
 			tag = getTag(address)
 			block = getBlock(address)
 			if (cache[block][0]==0 and cache[block][1]=='' and cache[block][2]=='I'):
-				myPrint (idProc, 'Miss, cold $')
+				myPrint (idProc, 'Miss, cold $, read')
 				#Debo traer el dato de memoria y escribirla en $ o de una $ con M
 				foundData = control (idProc, address, 'search', 'read')
 				if (foundData != 'Not found'):
@@ -286,7 +287,7 @@ def processor(idProc, requestsQueue, responseQueue):
 					if (foundMemData != 0):
 						cache[block][2] = 'S'
 						cache[block][0] = tag
-						cache[block][1] = foundData
+						cache[block][1] = foundMemData
 					else:
 						cache[block][2] = 'I'
 						cache[block][0] = tag
@@ -296,7 +297,7 @@ def processor(idProc, requestsQueue, responseQueue):
 
 			elif (cache[block][0]!=tag):
 				if (cache[block][2]=='M'):
-					myPrint (idProc, 'Miss, coherency')
+					myPrint (idProc, 'Miss, coherency, read')
 					tempAddress = getAddress(cache[block][0], block)
 					tempData = cache[block][1]
 					#Guardar en memoria con tempAddress y tempData
@@ -318,14 +319,14 @@ def processor(idProc, requestsQueue, responseQueue):
 						if (foundMemData != 0):
 							cache[block][2] = 'S'
 							cache[block][0] = tag
-							cache[block][1] = foundData
+							cache[block][1] = foundMemData
 						else:
 							cache[block][2] = 'I'
 							cache[block][0] = tag
 							cache[block][1] = ''
 					myPrint (idProc, cache)
 				elif (cache[block][2]=='I'):
-					myPrint (idProc, 'Miss, coherency')
+					myPrint (idProc, 'Miss, coherency, read')
 					#Buscar el dato nuevo en algun $ con M o en memoria
 					foundData = control (idProc, address, 'search', 'read')
 					if (foundData != 'Not found'):
@@ -341,7 +342,7 @@ def processor(idProc, requestsQueue, responseQueue):
 						if (foundMemData != 0):
 							cache[block][2] = 'S'
 							cache[block][0] = tag
-							cache[block][1] = foundData
+							cache[block][1] = foundMemData
 						else:
 							cache[block][2] = 'I'
 							cache[block][0] = tag
@@ -350,7 +351,7 @@ def processor(idProc, requestsQueue, responseQueue):
 					myPrint (idProc, cache)
 					#Revisar el protocolo en este caso 
 				elif (cache[block][0]=='S'):
-					myPrint (idProc, 'Miss, coherency')
+					myPrint (idProc, 'Miss, coherency, read')
 					#Buscar el dato nuevo en algun $ con M o en memoria
 					foundData = control (idProc, address, 'search', 'read')
 					if (foundData != 'Not found'):
@@ -366,7 +367,7 @@ def processor(idProc, requestsQueue, responseQueue):
 						if (foundMemData != 0):
 							cache[block][2] = 'S'
 							cache[block][0] = tag
-							cache[block][1] = foundData
+							cache[block][1] = foundMemData
 						else:
 							cache[block][2] = 'I'
 							cache[block][0] = tag
@@ -380,7 +381,7 @@ def processor(idProc, requestsQueue, responseQueue):
 				elif (cache[block][2]=='S'):
 					myPrint (idProc, cache)
 				elif (cache[block][2]=='I'):
-					myPrint (idProc, 'Miss, invalid $')
+					myPrint (idProc, 'Miss, invalid $, read')
 					#Buscar en memoria principal o en cualquier $ con M
 					foundData = control (idProc, address, 'search', 'read')
 					if (foundData != 'Not found'):
@@ -396,7 +397,7 @@ def processor(idProc, requestsQueue, responseQueue):
 						if (foundMemData != 0):
 							cache[block][2] = 'S'
 							cache[block][0] = tag
-							cache[block][1] = foundData
+							cache[block][1] = foundMemData
 						else:
 							cache[block][2] = 'I'
 							cache[block][0] = tag
@@ -440,3 +441,21 @@ thread3 = threading.Thread(target = processor, args = ('CPU3', requestsQueue3, r
 thread3.start()
 thread4 = threading.Thread(target = processor, args = ('CPU4', requestsQueue4, responseQueue4, ))
 thread4.start()
+
+'''def menu ():
+	os.system('clear')
+	print ('Indicaciones')
+	print ('/Iniciar: Ejecuta los cuatro procesadores')
+	print ('/Ctrl+c: Detiene la ejecucion')
+
+while True:
+	menu()
+ 
+	# solicituamos una opción al usuario
+	opcionMenu = input()
+ 
+	if opcionMenu=="Iniciar":
+		thread1.start()
+		thread2.start()
+		thread3.start()
+		thread4.start()'''
